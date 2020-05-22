@@ -11,11 +11,12 @@ const inputReducer = (state, action) => {
         value: action.val,
         isValid: validate(action.val, action.validators),
       };
-    case 'TOUCH':
+    case 'TOUCH': {
       return {
         ...state,
         isTouched: true,
       };
+    }
     default:
       return state;
   }
@@ -23,9 +24,9 @@ const inputReducer = (state, action) => {
 
 const Input = (props) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
-    value: '',
-    isValid: false,
+    value: props.initialValue || '',
     isTouched: false,
+    isValid: props.initialValid || false,
   });
 
   const { id, onInput } = props;
@@ -33,40 +34,47 @@ const Input = (props) => {
 
   useEffect(() => {
     onInput(id, value, isValid);
-  }, [id, onInput, value, isValid]);
+  }, [id, value, isValid, onInput]);
 
-  const changeHandler = (e) => {
-    dispatch({ type: 'CHANGE', val: e.target.value, validators: props.validators });
-  };
-  const touchHandler = (e) => {
-    dispatch({ type: 'TOUCH' });
+  const changeHandler = (event) => {
+    dispatch({
+      type: 'CHANGE',
+      val: event.target.value,
+      validators: props.validators,
+    });
   };
 
-  const inputEl = (
-    <input
-      id={props.id}
-      type={props.type}
-      placeholder={props.placeholder}
-      onChange={changeHandler}
-      onBlur={touchHandler}
-      value={inputState.value}
-    />
-  );
-  const textareaEl = (
-    <textarea
-      id={props.id}
-      row={props.row || 3}
-      onChange={changeHandler}
-      value={inputState.value}
-    />
-  );
-  const element = props.element === 'input' ? inputEl : textareaEl;
+  const touchHandler = () => {
+    dispatch({
+      type: 'TOUCH',
+    });
+  };
+
+  const element =
+    props.element === 'input' ? (
+      <input
+        id={props.id}
+        type={props.type}
+        placeholder={props.placeholder}
+        onChange={changeHandler}
+        onBlur={touchHandler}
+        value={inputState.value}
+      />
+    ) : (
+      <textarea
+        id={props.id}
+        rows={props.rows || 3}
+        onChange={changeHandler}
+        onBlur={touchHandler}
+        value={inputState.value}
+      />
+    );
 
   return (
     <div
       className={`form-control ${
         !inputState.isValid && inputState.isTouched && 'form-control--invalid'
-      } `}
+      }`}
     >
       <label htmlFor={props.id}>{props.label}</label>
       {element}

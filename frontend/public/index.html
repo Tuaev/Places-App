@@ -8,6 +8,9 @@
   <meta name="theme-color" content="#000000" />
   <meta name="description" content="Web site created using create-react-app" />
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+
+
+  <link href='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css' rel='stylesheet' />
   <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -28,7 +31,10 @@
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="backdrop-hook"></div>
-  <div id="modal-hook"></div>
+
+  <div id="modal-hook">
+    <div id="newMap"></div>
+  </div>
   <div id="drawer-hook"></div>
   <div id="root"></div>
 

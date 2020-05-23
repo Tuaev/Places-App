@@ -1,13 +1,10 @@
 import React from 'react';
 
+import Card from '../../shared/components/UIElements/Card';
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
 import { useForm } from '../../shared/hooks/form-hook';
-import {
-  VALIDATOR_REQUIRE,
-  VALIDATOR_MINLENGTH,
-  VALIDATOR_EMAIL,
-} from '../../shared/util/validators';
+import { VALIDATOR_MINLENGTH, VALIDATOR_EMAIL } from '../../shared/util/validators';
 import './Auth.css';
 
 const Auth = (props) => {
@@ -31,15 +28,17 @@ const Auth = (props) => {
   };
 
   return (
-    <div className="authentication">
+    <Card className="authentication">
+      <h2>Login Required</h2>
+      <hr />
       <form onSubmit={authSubmitHandler}>
         <Input
           id="email"
           element="input"
           type="email"
           label="Email"
-          validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
-          errorText="Please enter a valid email."
+          validators={[VALIDATOR_EMAIL()]}
+          errorText="Please enter a valid email address"
           onInput={inputHandler}
         />
         <Input
@@ -47,15 +46,15 @@ const Auth = (props) => {
           element="input"
           type="password"
           label="Password"
-          validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(4)]}
-          errorText="Please enter a valid email."
+          validators={[VALIDATOR_MINLENGTH(5)]}
+          errorText="Please enter a valid password, at least 5 characters"
           onInput={inputHandler}
         />
         <Button type="submit" disabled={!formState.isValid}>
           LOGIN
         </Button>
       </form>
-    </div>
+    </Card>
   );
 };
 

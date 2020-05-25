@@ -1,12 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const PORT = 5000;
 
 const placesRoutes = require('./routes/places-routes');
 
-const PORT = 5000;
 const app = express();
 
+app.use(bodyParser.json());
+
 app.use('/api/places', placesRoutes);
+
 app.use((error, req, res, next) => {
   if (res.headerSent) {
     // console.log('Header Set');

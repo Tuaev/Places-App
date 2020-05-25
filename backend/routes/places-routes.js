@@ -1,11 +1,13 @@
-const express = require('express');
-const placesController = require('../controllers/places-controllers');
-const router = express.Router();
+const { Router } = require('express');
 
-router.post('/', placesController.createPlace);
+const { checkPlace } = require('../middleware/validation-middleware');
+const placesController = require('../controllers/places-controllers');
+const router = Router();
+
+router.post('/', checkPlace, placesController.createPlace);
 
 router.get('/:placeId', placesController.getPlaceById);
-router.patch('/:placeId', placesController.updatePlace);
+router.patch('/:placeId', checkPlace, placesController.updatePlace);
 router.delete('/:placeId', placesController.deletePlace);
 
 router.get('/user/:userId', placesController.getPlacesByUserId);

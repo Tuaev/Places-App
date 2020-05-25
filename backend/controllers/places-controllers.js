@@ -1,4 +1,6 @@
 const { v4: uuid } = require('uuid');
+
+const { validationCheck } = require('../middleware/validation-middleware');
 const HttpError = require('../models/http-errors');
 
 let DUMMY_PLACES = [
@@ -47,6 +49,8 @@ exports.getPlacesByUserId = (req, res, next) => {
 };
 
 exports.createPlace = (req, res, next) => {
+  validationCheck(req, 'Invalid inputs passed, please check your data.');
+
   const { title, description, coordinates, address, creator } = req.body;
   const createdPlace = {
     id: uuid(),
@@ -63,7 +67,8 @@ exports.createPlace = (req, res, next) => {
 };
 
 exports.updatePlace = (req, res, next) => {
-  console.log('update hit');
+  validationCheck(req, 'Invalid update inputs passed, please check your data.');
+
   const { title, description } = req.body;
   const placeId = req.params.placeId;
 

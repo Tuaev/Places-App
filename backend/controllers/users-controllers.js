@@ -1,4 +1,6 @@
 const { v4: uuid } = require('uuid');
+
+const { validationCheck } = require('../middleware/validation-middleware');
 const HttpError = require('../models/http-errors');
 
 let DUMMY_USERS = [
@@ -15,6 +17,8 @@ exports.getUsers = (req, res, next) => {
 };
 
 exports.signup = (req, res, next) => {
+  validationCheck(req, 'Invalid inputs passed, please check your data.');
+
   const { name, email, password } = req.body;
   const hasUser = DUMMY_USERS.find((user) => user.email === email);
 
@@ -35,6 +39,8 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
+  validationCheck(req, 'Invalid inputs passed, please check your data.');
+
   const { email, password } = req.body;
 
   const identifiedUser = DUMMY_USERS.find((user) => user.email === email);

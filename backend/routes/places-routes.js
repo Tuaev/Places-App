@@ -8,6 +8,6 @@ router.get('/:placeId', placesController.getPlaceById);
 router.patch('/:placeId', placesController.updatePlace);
 router.delete('/:placeId', placesController.deletePlace);
 
-router.get('/user/:userId', placesController.getPlaceByUserId);
+router.get('/user/:userId', placesController.getPlacesByUserId);
 
 module.exports = router;

@@ -58,7 +58,7 @@ exports.createPlace = (req, res, next) => {
   };
 
   DUMMY_PLACES.push(createdPlace);
-  console.log('Pushed');
+
   res.status(201).json({ place: createdPlace });
 };
 

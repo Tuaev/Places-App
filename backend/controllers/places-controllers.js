@@ -16,7 +16,7 @@ let DUMMY_PLACES = [
     creator: 'u1',
   },
   {
-    id: 'p1',
+    id: 'p2',
     title: 'Empire State Building',
     description: 'One of the most famous sky scrapers in the world',
     location: {
@@ -84,6 +84,9 @@ exports.updatePlace = (req, res, next) => {
 
 exports.deletePlace = (req, res, next) => {
   const placeId = req.params.placeId;
+  if (!DUMMY_PLACES.find((place) => place.id === placeId)) {
+    throw new HttpError('Could not find a place with that id');
+  }
   DUMMY_PLACES = DUMMY_PLACES.filter((place) => place.id !== placeId);
 
   res.status(200).json({ message: 'Deleted place.' });

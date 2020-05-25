@@ -18,7 +18,6 @@ exports.checkPlace = [
 // USERS
 exports.checkSignUp = [
   check('name').not().isEmpty(),
-  check('email').isEmail(),
+  check('email').normalizeEmail().isEmail(),
   check('password').isLength({ min: 7 }),
 ];
-exports.checkLogin = [check('email').isEmail(), check('password').isLength({ min: 7 })];

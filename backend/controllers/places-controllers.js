@@ -1,6 +1,7 @@
 const { v4: uuid } = require('uuid');
 
 const { validationCheck } = require('../middleware/validation-middleware');
+const { getCoordsForAddress } = require('../utils/location');
 const HttpError = require('../models/http-errors');
 
 let DUMMY_PLACES = [
@@ -48,10 +49,22 @@ exports.getPlacesByUserId = (req, res, next) => {
   res.json({ places });
 };
 
-exports.createPlace = (req, res, next) => {
-  validationCheck(req, 'Invalid inputs passed, please check your data.');
+exports.createPlace = async (req, res, next) => {
+  try {
+    validationCheck(req, 'Invalid inputs passed, please check your data.');
+  } catch (error) {
+    return next(error);
+  }
 
-  const { title, description, coordinates, address, creator } = req.body;
+  const { title, description, address, creator } = req.body;
+  let coordinates;
+
+  try {
+    coordinates = await getCoordsForAddress(address);
+  } catch (error) {
+    return next(error);
+  }
+
   const createdPlace = {
     id: uuid(),
     title,

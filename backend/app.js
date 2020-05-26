@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const PORT = 5000;
+require('dotenv').config();
+// const PORT = 5000;
 
 const placesRoutes = require('./routes/places-routes');
 const userRoutes = require('./routes/users-routes');
@@ -27,5 +28,4 @@ app.use((error, req, res, next) => {
   res.status(error.code || 500);
   res.json({ message: error.message || 'An unknown error occurred' });
 });
-
-app.listen(PORT, () => {});
+app.listen(process.env.PORT, () => {});

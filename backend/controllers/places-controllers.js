@@ -97,20 +97,33 @@ exports.createPlace = async (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
-exports.updatePlace = (req, res, next) => {
-  validationCheck(req, 'Invalid update inputs passed, please check your data.');
+exports.updatePlace = async (req, res, next) => {
+  try {
+    validationCheck(req, 'Invalid inputs passed, please check your data.');
+  } catch (error) {
+    return next(error);
+  }
 
   const { title, description } = req.body;
   const placeId = req.params.placeId;
+  let place;
 
-  const updatedPlace = { ...DUMMY_PLACES.find((place) => place.id === placeId) };
-  const placeIndex = DUMMY_PLACES.findIndex((place) => place.id === placeId);
-  updatedPlace.title = title;
-  updatedPlace.description = description;
+  try {
+    place = await Place.findById(placeId);
+  } catch (error) {
+    return next(new HttpError('Something went wrong, could not update place.', 500));
+  }
 
-  DUMMY_PLACES[placeIndex] = updatedPlace;
+  place.title = title;
+  place.description = description;
 
-  res.status(200).json({ place: updatedPlace });
+  try {
+    await place.save();
+  } catch (error) {
+    return next(new HttpError('Something went wrong, could not save updated place.', 500));
+  }
+
+  res.status(200).json({ place: place.toObject({ getters: true }) });
 };
 
 exports.deletePlace = (req, res, next) => {

@@ -1,43 +1,49 @@
 const { v4: uuid } = require('uuid');
 
+const Place = require('../models/place');
 const { validationCheck } = require('../middleware/validation-middleware');
 const { getCoordsForAddress } = require('../utils/location');
 const HttpError = require('../models/http-errors');
 
 let DUMMY_PLACES = [
-  {
-    id: 'p1',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapers in the world',
-    location: {
-      lat: '40.7485644',
-      lng: '-73.9867614',
-    },
-    address: '20 W 34th St, New York, NY 10001, United States',
-    creator: 'u1',
-  },
-  {
-    id: 'p2',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapers in the world',
-    location: {
-      lat: '40.7485644',
-      lng: '-73.9867614',
-    },
-    address: '20 W 34th St, New York, NY 10001, United States',
-    creator: 'u1',
-  },
+  // {
+  //   id: 'p1',
+  //   title: 'Empire State Building',
+  //   description: 'One of the most famous sky scrapers in the world',
+  //   location: {
+  //     lat: '40.7485644',
+  //     lng: '-73.9867614',
+  //   },
+  //   address: '20 W 34th St, New York, NY 10001, United States',
+  //   creator: 'u1',
+  // },
+  // {
+  //   id: 'p2',
+  //   title: 'Empire State Building',
+  //   description: 'One of the most famous sky scrapers in the world',
+  //   location: {
+  //     lat: '40.7485644',
+  //     lng: '-73.9867614',
+  //   },
+  //   address: '20 W 34th St, New York, NY 10001, United States',
+  //   creator: 'u1',
+  // },
 ];
 
-exports.getPlaceById = (req, res, next) => {
+exports.getPlaceById = async (req, res, next) => {
   const { placeId } = req.params;
-  const place = DUMMY_PLACES.find((place) => place.id === placeId);
-
-  if (!place) {
-    throw new HttpError('Could not find a place for the provided id.', 404);
+  let place;
+  try {
+    place = await Place.findById(placeId);
+  } catch (error) {
+    return next(new HttpError('Something went wrong, could not find a place.', 500));
   }
 
-  res.json({ place });
+  if (!place) {
+    return next(new HttpError('Could not find a place for the provided id.', 404));
+  }
+
+  res.json({ place: place.toObject({ getters: true }) });
 };
 
 exports.getPlacesByUserId = (req, res, next) => {
@@ -56,7 +62,7 @@ exports.createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  const { title, description, address, creator } = req.body;
+  const { title, description, address, creator, image } = req.body;
   let coordinates;
 
   try {
@@ -65,16 +71,20 @@ exports.createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  const createdPlace = {
-    id: uuid(),
+  const createdPlace = new Place({
     title,
     description,
-    location: coordinates,
+    image: 'https://cdn.stocksnap.io/img-thumbs/960w/New%20York-city_4DA1218986.jpg',
     address,
+    location: coordinates,
     creator,
-  };
+  });
 
-  DUMMY_PLACES.push(createdPlace);
+  try {
+    await createdPlace.save();
+  } catch (error) {
+    return next(new HttpError('Creating a place failed, please try again', 500));
+  }
 
   res.status(201).json({ place: createdPlace });
 };

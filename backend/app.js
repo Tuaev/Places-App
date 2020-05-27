@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 // const PORT = 5000;
@@ -10,6 +11,7 @@ const HttpError = require('./models/http-errors');
 const app = express();
 
 app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/places', placesRoutes);
 app.use('/api/users', userRoutes);
@@ -28,4 +30,17 @@ app.use((error, req, res, next) => {
   res.status(error.code || 500);
   res.json({ message: error.message || 'An unknown error occurred' });
 });
-app.listen(process.env.PORT, () => {});
+
+mongoose
+  .connect(process.env.MONGODB_ADDR, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    app.listen(process.env.PORT, () => {
+      console.log('Connected to database - Running on Port: 5000');
+    });
+  })
+  .catch((err) => {
+    return console.log('Connection failed');
+  });

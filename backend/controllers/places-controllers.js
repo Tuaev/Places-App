@@ -1,5 +1,7 @@
 const { v4: uuid } = require('uuid');
+const mongoose = require('mongoose');
 
+const User = require('../models/user');
 const Place = require('../models/place');
 const { validationCheck } = require('../middleware/validation-middleware');
 const { getCoordsForAddress } = require('../utils/location');
@@ -63,9 +65,27 @@ exports.createPlace = async (req, res, next) => {
     creator,
   });
 
+  let user;
   try {
-    await createdPlace.save();
+    user = await User.findById(creator);
   } catch (error) {
+    return next(new HttpError('Could not find a user for provided id', 404));
+  }
+
+  if (!user) {
+    return next(new HttpError('Could not find a user for provided id', 404));
+  }
+
+  try {
+    // video 9.15
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdPlace.save({ session: sess });
+    user.places.push(createdPlace);
+    await user.save({ session: sess });
+    await sess.commitTransaction();
+  } catch (error) {
+    console.log(error);
     return next(new HttpError('Creating a place failed, please try again', 500));
   }
 

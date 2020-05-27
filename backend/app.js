@@ -35,6 +35,7 @@ mongoose
   .connect(process.env.MONGODB_ADDR, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true,
   })
   .then(() => {
     app.listen(process.env.PORT, () => {

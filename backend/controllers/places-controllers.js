@@ -5,31 +5,6 @@ const { validationCheck } = require('../middleware/validation-middleware');
 const { getCoordsForAddress } = require('../utils/location');
 const HttpError = require('../models/http-errors');
 
-let DUMMY_PLACES = [
-  // {
-  //   id: 'p1',
-  //   title: 'Empire State Building',
-  //   description: 'One of the most famous sky scrapers in the world',
-  //   location: {
-  //     lat: '40.7485644',
-  //     lng: '-73.9867614',
-  //   },
-  //   address: '20 W 34th St, New York, NY 10001, United States',
-  //   creator: 'u1',
-  // },
-  // {
-  //   id: 'p2',
-  //   title: 'Empire State Building',
-  //   description: 'One of the most famous sky scrapers in the world',
-  //   location: {
-  //     lat: '40.7485644',
-  //     lng: '-73.9867614',
-  //   },
-  //   address: '20 W 34th St, New York, NY 10001, United States',
-  //   creator: 'u1',
-  // },
-];
-
 exports.getPlaceById = async (req, res, next) => {
   const { placeId } = req.params;
   let place;

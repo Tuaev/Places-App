@@ -52,14 +52,22 @@ exports.signup = async (req, res, next) => {
   res.status(201).json({ user: createdUser.toObject({ getters: true }) });
 };
 
-exports.login = (req, res, next) => {
-  validationCheck(req, 'Invalid inputs passed, please check your data.');
-
+exports.login = async (req, res, next) => {
+  try {
+    validationCheck(req, 'Invalid inputs passed, please check your data.');
+  } catch (error) {
+    return next(error);
+  }
   const { email, password } = req.body;
+  let existingUsers;
+  try {
+    existingUsers = await User.findOne({ email });
+  } catch (error) {
+    return next(new HttpError('Login failed, invalid credentials', 401));
+  }
 
-  const identifiedUser = DUMMY_USERS.find((user) => user.email === email);
-  if (!identifiedUser || identifiedUser.password !== password) {
-    return next(new HttpError('Email or Password is incorrect', 401));
+  if (!existingUsers || existingUsers.password !== password) {
+    return next(new HttpError('Login failed, invalid credentials', 401));
   }
 
   res.json({ message: 'Logged in!' });

@@ -108,7 +108,6 @@ exports.updatePlace = async (req, res, next) => {
   } catch (error) {
     return next(new HttpError('Something went wrong, could not update place.', 500));
   }
-
   place.title = title;
   place.description = description;
 
@@ -124,7 +123,19 @@ exports.updatePlace = async (req, res, next) => {
 exports.deletePlace = async (req, res, next) => {
   const placeId = req.params.placeId;
   try {
-    place = await Place.deleteOne({ _id: placeId });
+    place = await Place.findById(placeId).populate('creator');
+  } catch (error) {
+    return next(new HttpError('Something went wrong, could not delete place.', 500));
+  }
+
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    await place.remove({ session });
+    place.creator.places.pull(place);
+    await place.creator.save({ session });
+    await session.commitTransaction();
   } catch (error) {
     return next(new HttpError('Something went wrong, could not delete place.', 500));
   }

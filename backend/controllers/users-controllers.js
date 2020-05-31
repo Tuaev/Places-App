@@ -54,16 +54,16 @@ exports.login = async (req, res, next) => {
     return next(error);
   }
   const { email, password } = req.body;
-  let existingUsers;
+  let existingUser;
   try {
-    existingUsers = await User.findOne({ email });
+    existingUser = await User.findOne({ email });
   } catch (error) {
     return next(new HttpError('Login failed, invalid credentials', 401));
   }
 
-  if (!existingUsers || existingUsers.password !== password) {
+  if (!existingUser || existingUser.password !== password) {
     return next(new HttpError('Login failed, invalid credentials', 401));
   }
 
-  res.json({ message: 'Logged in!' });
+  res.json({ message: 'Logged in!', user: existingUser.toObject({ getters: true }) });
 };

@@ -58,7 +58,6 @@ const Auth = () => {
 
     if (isLoginMode) {
     } else {
-      console.log('hit');
       try {
         const response = await fetch('http://localhost:5000/api/users/signup', {
           method: 'POST',

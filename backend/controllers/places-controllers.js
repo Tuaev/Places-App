@@ -1,4 +1,3 @@
-const { v4: uuid } = require('uuid');
 const mongoose = require('mongoose');
 
 const User = require('../models/user');
@@ -25,8 +24,8 @@ exports.getPlaceById = async (req, res, next) => {
 
 exports.getPlacesByUserId = async (req, res, next) => {
   const { userId } = req.params;
-  // let places;
   let userWithPlaces;
+
   try {
     // 9.17 video
     userWithPlaces = await User.findById(userId).populate('places');

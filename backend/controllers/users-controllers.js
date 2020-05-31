@@ -1,17 +1,6 @@
-const { v4: uuid } = require('uuid');
-
 const User = require('../models/user');
 const HttpError = require('../models/http-errors');
 const { validationCheck } = require('../middleware/validation-middleware');
-
-let DUMMY_USERS = [
-  {
-    id: 'u1',
-    name: 'John',
-    email: 'john@example.com',
-    password: 'password',
-  },
-];
 
 exports.getUsers = async (req, res, next) => {
   let users;

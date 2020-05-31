@@ -12,7 +12,7 @@ import {
 } from '../../shared/util/validators';
 import './Auth.css';
 
-const Auth = (props) => {
+const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [formState, inputHandler, setFormData] = useForm(
@@ -28,12 +28,6 @@ const Auth = (props) => {
     },
     false
   );
-
-  const authSubmitHandler = (event) => {
-    event.preventDefault();
-    console.log('submited ', formState.inputs); // send this to the backend!
-    auth.login();
-  };
 
   const switchModeHandler = () => {
     if (!isLoginMode) {
@@ -57,6 +51,35 @@ const Auth = (props) => {
       );
     }
     setIsLoginMode((prevMode) => !prevMode);
+  };
+
+  const authSubmitHandler = async (event) => {
+    event.preventDefault();
+
+    if (isLoginMode) {
+    } else {
+      console.log('hit');
+      try {
+        const response = await fetch('http://localhost:5000/api/users/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formState.inputs.name.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+        });
+
+        const responseData = await response.json();
+        console.log(responseData);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    auth.login();
   };
 
   return (
@@ -96,10 +119,10 @@ const Auth = (props) => {
         <Button type="submit" disabled={!formState.isValid}>
           {isLoginMode ? 'LOGIN' : 'SIGN UP'}
         </Button>
-        <Button inverse onClick={switchModeHandler}>
-          SWITCH TO {isLoginMode ? 'SIGN UP' : 'LOGIN'}
-        </Button>
       </form>
+      <Button inverse onClick={switchModeHandler}>
+        SWITCH TO {isLoginMode ? 'SIGN UP' : 'LOGIN'}
+      </Button>
     </Card>
   );
 };

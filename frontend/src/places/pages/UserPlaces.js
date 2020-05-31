@@ -1,42 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import PlaceList from '../components/PlaceList';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import { useHttpClient } from '../../shared/hooks/http-hook';
 
-const DUMMY_PLACES = [
-  {
-    id: 'p1',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    imageUrl:
-      'https://images.pexels.com/photos/2404949/pexels-photo-2404949.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
-    address: '20 W 34th St, New York, NY 10001, United States',
-    location: {
-      lat: '40.7485644',
-      lng: '-73.9867614',
-    },
-    creator: 'u1',
-  },
-  {
-    id: 'p2',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    imageUrl:
-      'https://images.pexels.com/photos/2404949/pexels-photo-2404949.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260',
-    address: '20 W 34th St, New York, NY 10001, United States',
-    location: {
-      lat: '40.7485644',
-      lng: '-73.9867614',
-    },
-    creator: 'u2',
-  },
-];
-
-const UserPlaces = (props) => {
+const UserPlaces = () => {
   const { userId } = useParams();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [loadedPlaces, setLoadedPlaces] = useState();
 
-  const loadedPlaces = DUMMY_PLACES.filter((place) => place.creator === userId);
-  return <PlaceList items={loadedPlaces} />;
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const responseData = await sendRequest(`http://localhost:5000/api/places/user/${userId}`);
+        setLoadedPlaces(responseData.places).filter((place) => place.creator === userId);
+      } catch (error) {}
+    };
+    fetchPlaces();
+  }, [sendRequest, userId]);
+
+  // const loadedPlaces = DUMMY_PLACES.filter((place) => place.creator === userId);
+  return (
+    <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner asOverlay />
+        </div>
+      )}
+      {!isLoading && loadedPlaces && <PlaceList items={loadedPlaces} />}
+    </React.Fragment>
+  );
 };
 
 export default UserPlaces;

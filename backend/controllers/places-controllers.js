@@ -61,8 +61,8 @@ exports.createPlace = async (req, res, next) => {
   const createdPlace = new Place({
     title,
     description,
-    image: 'https://cdn.stocksnap.io/img-thumbs/960w/New%20York-city_4DA1218986.jpg',
     address,
+    image: req.file.path,
     location: coordinates,
     creator,
   });

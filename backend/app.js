@@ -11,9 +11,9 @@ const HttpError = require('./models/http-errors');
 const app = express();
 
 app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // '*' gives all domains access. changing to localhost:3000 is more secure
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000'); // '*' gives all domains access. changing to localhost:3000 is more secure
   res.setHeader(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization'

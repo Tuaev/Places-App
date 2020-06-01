@@ -3,6 +3,7 @@ import React, { useState, useContext } from 'react';
 import Card from '../../shared/components/UIElements/Card';
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import { useForm } from '../../shared/hooks/form-hook';
@@ -104,15 +105,18 @@ const Auth = () => {
         <hr />
         <form onSubmit={authSubmitHandler}>
           {!isLoginMode && (
-            <Input
-              element="input"
-              id="name"
-              type="text"
-              label="Your Name"
-              validators={[VALIDATOR_REQUIRE()]}
-              errorText="Please enter a name"
-              onInput={inputHandler}
-            />
+            <React.Fragment>
+              <Input
+                element="input"
+                id="name"
+                type="text"
+                label="Your Name"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText="Please enter a name"
+                onInput={inputHandler}
+              />
+              <ImageUpload id="image" center />
+            </React.Fragment>
           )}
           <Input
             id="email"

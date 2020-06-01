@@ -1,3 +1,4 @@
+const fs = require('fs');
 const mongoose = require('mongoose');
 
 const User = require('../models/user');
@@ -131,6 +132,8 @@ exports.deletePlace = async (req, res, next) => {
     return next(new HttpError('Something went wrong, could not delete place.', 500));
   }
 
+  const imagePath = place.image;
+
   try {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -142,6 +145,10 @@ exports.deletePlace = async (req, res, next) => {
   } catch (error) {
     return next(new HttpError('Something went wrong, could not delete place.', 500));
   }
+
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+  });
 
   res.status(200).json({ message: 'Deleted place.' });
 };

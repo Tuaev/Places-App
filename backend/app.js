@@ -34,6 +34,7 @@ app.use((req, res, next) => {
   throw error;
 });
 
+// rollback file upload if something goes wrong with request
 app.use((error, req, res, next) => {
   if (req.file) {
     fs.unlink(req.file.path, (err) => {

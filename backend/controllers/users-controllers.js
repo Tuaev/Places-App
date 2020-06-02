@@ -68,10 +68,21 @@ exports.login = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ email });
   } catch (error) {
-    return next(new HttpError('Login failed, invalid credentials', 401));
+    return next(new HttpError('Login failed, invalid credentials.', 401));
   }
 
-  if (!existingUser || existingUser.password !== password) {
+  if (!existingUser) {
+    return next(new HttpError('Login failed, invalid credentials.', 401));
+  }
+
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
+  } catch (error) {
+    return next(new HttpError('Login failed, please check your credentials and try again.', 500));
+  }
+
+  if (!isValidPassword) {
     return next(new HttpError('Login failed, invalid credentials', 401));
   }
 

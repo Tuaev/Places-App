@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 const HttpError = require('../models/http-errors');
@@ -48,13 +49,23 @@ exports.signup = async (req, res, next) => {
     image: req.file.path,
     places: [],
   });
+
   try {
     await createdUser.save();
   } catch (error) {
     return next(new HttpError('Signing up failed, please try again later', 500));
   }
 
-  res.status(201).json({ user: createdUser.toObject({ getters: true }) });
+  let token;
+  try {
+    token = jwt.sign({ userId: createdUser.id, email: createdUser.email }, process.env.JWT_SECRET, {
+      expiresIn: '5d',
+    });
+  } catch (error) {
+    return next(new HttpError('Signing up failed, please try again later', 500));
+  }
+
+  res.status(201).json({ userId: createdUser.id, email: createdUser.email, token });
 };
 
 exports.login = async (req, res, next) => {
@@ -86,5 +97,18 @@ exports.login = async (req, res, next) => {
     return next(new HttpError('Login failed, invalid credentials', 401));
   }
 
-  res.json({ message: 'Logged in!', user: existingUser.toObject({ getters: true }) });
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: existingUser.id, email: existingUser.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '5d',
+      }
+    );
+  } catch (error) {
+    return next(new HttpError('Login failed, please try again later', 500));
+  }
+
+  res.json({ message: 'Logged in!', userId: existingUser.id, email: existingUser.email, token });
 };

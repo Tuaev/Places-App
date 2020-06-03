@@ -103,7 +103,7 @@ exports.login = async (req, res, next) => {
       { userId: existingUser.id, email: existingUser.email },
       process.env.JWT_SECRET,
       {
-        expiresIn: '5d',
+        expiresIn: '1h',
       }
     );
   } catch (error) {

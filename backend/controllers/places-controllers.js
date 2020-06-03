@@ -108,9 +108,17 @@ exports.updatePlace = async (req, res, next) => {
 
   try {
     place = await Place.findById(placeId);
+    if (!place) {
+      throw new Error('Place not found');
+    }
   } catch (error) {
-    return next(new HttpError('Something went wrong, could not update place.', 500));
+    return next(new HttpError('Something went wrong, place does not exist.', 500));
   }
+
+  if (place.creator.toString() !== req.userData.userId) {
+    return next(new HttpError('You are not authorized to edit this place', 401));
+  }
+
   place.title = title;
   place.description = description;
   place.address = address;

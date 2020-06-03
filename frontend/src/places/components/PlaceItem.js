@@ -29,7 +29,9 @@ const PlaceItem = (props) => {
   const confirmDeleteHandler = async () => {
     viewDeleteWarningHandler();
     try {
-      await sendRequest(`http://localhost:5000/api/places/${props.id}`, 'DELETE');
+      await sendRequest(`http://localhost:5000/api/places/${props.id}`, 'DELETE', {
+        Authorization: 'Bearer ' + auth.token,
+      });
       props.onDelete(props.id);
     } catch (error) {}
   };

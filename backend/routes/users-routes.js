@@ -1,10 +1,10 @@
-const { Router } = require('express');
+const express = require('express');
 
 const { checkSignUp } = require('../middleware/validation-middleware');
 const fileUpload = require('../middleware/file-upload');
 const usersController = require('../controllers/users-controllers');
 
-const router = Router();
+const router = express.Router();
 
 router.get('/', usersController.getUsers);
 

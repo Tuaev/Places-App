@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 
 import Users from './user/pages/Users';
@@ -8,53 +8,11 @@ import UserPlaces from './places/pages/UserPlaces';
 import UpdatePlace from './places/pages/UpdatePlace';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import { AuthContext } from './shared/context/auth-context';
+import { useAuth } from './shared/hooks/auth-hook';
 // import './App.css';
 
-let logoutTimer;
-
 const App = () => {
-  const [token, setToken] = useState(false);
-  const [userId, setUserId] = useState(false);
-  const [tokenExpirationDate, setTokenExpirationDate] = useState();
-
-  const login = useCallback((uid, token, existingExpiration) => {
-    setToken(token);
-    setUserId(uid);
-    const expiresIn = 1000 * 60 * 60; // 1hour
-    const expiration = existingExpiration || new Date(new Date().getTime() + expiresIn);
-    setTokenExpirationDate(expiration);
-    localStorage.setItem(
-      'userData',
-      JSON.stringify({
-        userId: uid,
-        token,
-        expiration: expiration.toISOString(),
-      })
-    );
-  }, []);
-
-  const logout = useCallback(() => {
-    setToken(null);
-    setUserId(null);
-    setTokenExpirationDate(null);
-    localStorage.removeItem('userData');
-  }, []);
-
-  useEffect(() => {
-    if (token && tokenExpirationDate) {
-      const remainingTime = tokenExpirationDate.getTime() - new Date().getTime();
-      logoutTimer = setTimeout(logout, remainingTime);
-    } else {
-      clearTimeout(logoutTimer);
-    }
-  }, [token, logout, tokenExpirationDate]);
-
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('userData'));
-    if (storedData && storedData.token && new Date(storedData.expiration) > new Date()) {
-      login(storedData.userId, storedData.token, new Date(storedData.expiration));
-    }
-  }, [login]);
+  const { token, login, logout, userId } = useAuth();
 
   let routes;
   if (token) {

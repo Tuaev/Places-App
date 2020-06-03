@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 
 import Users from './user/pages/Users';
@@ -13,6 +13,7 @@ import { AuthContext } from './shared/context/auth-context';
 const App = () => {
   const [token, setToken] = useState(false);
   const [userId, setUserId] = useState(false);
+
   const login = useCallback((uid, token) => {
     setToken(token);
     localStorage.setItem('userData', JSON.stringify({ userId: uid, token }));
@@ -21,10 +22,17 @@ const App = () => {
   const logout = useCallback(() => {
     setToken(null);
     setUserId(null);
+    localStorage.removeItem('userData');
   }, []);
 
-  let routes;
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem('userData'));
+    if (storedData && storedData.token) {
+      login(storedData.userId, storedData.token);
+    }
+  }, [login]);
 
+  let routes;
   if (token) {
     routes = (
       <Switch>

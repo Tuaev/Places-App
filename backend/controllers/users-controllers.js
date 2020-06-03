@@ -94,7 +94,7 @@ exports.login = async (req, res, next) => {
   }
 
   if (!isValidPassword) {
-    return next(new HttpError('Login failed, invalid credentials', 401));
+    return next(new HttpError('Login failed, invalid credentials', 403));
   }
 
   let token;

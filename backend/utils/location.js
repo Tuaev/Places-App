@@ -16,8 +16,8 @@ exports.getCoordsForAddress = async (address) => {
     throw new HttpError('Could not find a location for the specified address', 422);
   }
   const coordinates = {
-    lat: data[0].center[0],
-    lng: data[0].center[1],
+    lat: data[0].center[1],
+    lng: data[0].center[0],
   };
   return coordinates;
 };

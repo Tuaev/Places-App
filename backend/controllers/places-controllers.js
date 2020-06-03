@@ -50,7 +50,7 @@ exports.createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  const { title, description, address, creator, image } = req.body;
+  const { title, description, address } = req.body;
   let coordinates;
 
   try {
@@ -65,12 +65,12 @@ exports.createPlace = async (req, res, next) => {
     address,
     image: req.file.path,
     location: coordinates,
-    creator,
+    creator: req.userData.userId,
   });
 
   let user;
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userData.userId);
   } catch (error) {
     return next(new HttpError('Could not find a user for provided id', 404));
   }

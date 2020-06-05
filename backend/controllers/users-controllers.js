@@ -16,6 +16,7 @@ exports.getUsers = async (req, res, next) => {
 };
 
 exports.signup = async (req, res, next) => {
+  console.log('Hit me here!');
   try {
     validationCheck(req, 'Invalid inputs passed, please check your data.');
   } catch (error) {

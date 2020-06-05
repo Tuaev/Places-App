@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000'); // '*' gives all domains access. changing to localhost:3000 is more secure
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
@@ -45,7 +45,7 @@ app.use((error, req, res, next) => {
     // console.log('Header Set');
     return next(error);
   }
-  // console.log('Header NOT Set');
+  console.log('FULL ERROR: ', error);
   res.status(error.code || 500);
   res.json({ message: error.message || 'An unknown error occurred' });
 });
@@ -57,7 +57,7 @@ mongoose
     useCreateIndex: true,
   })
   .then(() => {
-    app.listen(process.env.PORT, () => {
+    app.listen(process.env.PORT || 5000, () => {
       console.log('Connected to database - Running on Port: 5000');
     });
   })

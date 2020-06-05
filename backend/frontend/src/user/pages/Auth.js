@@ -94,8 +94,7 @@ const Auth = () => {
         const responseData = await sendRequest(
           process.env.REACT_APP_BACKEND_URL + '/users/signup',
           'POST',
-          formData,
-          {}
+          formData
         );
 
         auth.login(responseData.userId, responseData.token);
